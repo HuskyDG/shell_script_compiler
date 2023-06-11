@@ -10,7 +10,7 @@ mkdir tmp
 
 cat <<EOF >./native/jni/script.hpp
 #include "obfuscate.h"
-const char *shell_script = OBFUSCATE("$(cat ./scripts/script.sh | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g')");
+const char *shell_script = OBFUSCATE("$(cat ./scripts/script.sh | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | sed 's/$/\\n/g' | tr -d '\n')");
 EOF
 
 pushd native
