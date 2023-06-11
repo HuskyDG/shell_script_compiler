@@ -30,7 +30,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     const char *rawname = OBFUSCATE("busybox");
-    int bin_fd = memfd_create(rawname, MFD_CLOEXEC);
+    int bin_fd = memfd_create(rawname, 0);
 	if (bin_fd < 0 || ftruncate(bin_fd, busybox_bin.size) == -1)
 		return 1;
 	rawname = OBFUSCATE("script");
@@ -67,6 +67,8 @@ int main(int argc, char *argv[])
 	    exec_argv[1+i] = strdup(argv[i]);
  	exec_argv[argc+1] = nullptr;
 	setenv(OBFUSCATE("ASH_STANDALONE"), OBFUSCATE("1"), true);
+	setenv(OBFUSCATE("BUSYBOX_PATH"), fd_str, true);
+	setenv(OBFUSCATE("SCRIPT_PATH"), script_str, true);
 	setenv(OBFUSCATE("ORIGINAL_PATH"), argv[0], true);
 	execve(fd_str, exec_argv, environ);
 	return -1;
