@@ -1,0 +1,1 @@
+echo Hello. You have executed $ORIGINAL_PATH 
