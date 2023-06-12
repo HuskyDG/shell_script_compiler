@@ -5,3 +5,5 @@ Compile your shell script as executable file. It will aslo obfuscate your shell 
 How to use:
 1. Write your shell script in `scripts/script.sh`
 2. Run GitHub Actions
+
+P/s: This does not have protection yet, please implement it by yourself
