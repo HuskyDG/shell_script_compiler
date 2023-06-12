@@ -1,23 +1,22 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-set -euo pipefail
+NAME="$1"
+set -e
 
-build_mode="${1:-release}"
-
-cd "$(dirname "$0")"
-rm -rf tmp
-mkdir tmp
+export PATH=${PATH}:${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin
 
 cat <<EOF >./native/jni/script.hpp
 #include "obfuscate.h"
 const char *shell_script = OBFUSCATE("$(cat ./scripts/script.sh | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | sed 's/$/\\n/g' | tr -d '\n')");
 EOF
 
-pushd native
-rm -fr libs obj
-debug_mode=1
-if [[ "$build_mode" == "release" ]]; then
-    debug_mode=0
-fi
-ndk-build -j4 NDK_DEBUG=$debug_mode
-popd
+CXX=${CXX:-aarch64-linux-android31-clang++}
+
+${CXX} \
+    native/jni/main.cpp \
+    -static \
+    -std=c++17 \
+    -o "$NAME"
+
+
+
