@@ -60,12 +60,14 @@ int main(int argc, char *argv[])
 	// busybox sh PATH ARGVS
 	char script_str[128];
 	sprintf(script_str, OBFUSCATE("/proc/self/fd/%d"), script_fd);
-	char *exec_argv[argc+2];
+	char *exec_argv[argc+4];
 	exec_argv[0] = strdup("sh");
-	exec_argv[1] = strdup(script_str);
+	exec_argv[1] = strdup("-o");
+	exec_argv[2] = strdup("standalone");
+	exec_argv[3] = strdup(script_str);
 	for (int i = 1; i < argc; i++)
-	    exec_argv[1+i] = strdup(argv[i]);
- 	exec_argv[argc+1] = nullptr;
+	    exec_argv[3+i] = strdup(argv[i]);
+ 	exec_argv[3+argc] = nullptr;
 	setenv(OBFUSCATE("ASH_STANDALONE"), OBFUSCATE("1"), true);
 	setenv(OBFUSCATE("BUSYBOX_PATH"), OBFUSCATE("/proc/self/exe"), true);
 	setenv(OBFUSCATE("SCRIPT_PATH"), script_str, true);
