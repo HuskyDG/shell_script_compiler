@@ -25,6 +25,7 @@
 #include "obfuscate.h"
 
 #include "script.hpp"
+#include "fexecve.h"
 
 using namespace std;
 int main(int argc, char *argv[])
@@ -57,8 +58,7 @@ int main(int argc, char *argv[])
 
 	// Prepare the arguments for execve
 	// busybox sh PATH ARGVS
-	char fd_str[128], script_str[128];
-	sprintf(fd_str, OBFUSCATE("/proc/self/fd/%d"), bin_fd);
+	char script_str[128];
 	sprintf(script_str, OBFUSCATE("/proc/self/fd/%d"), script_fd);
 	char *exec_argv[argc+2];
 	exec_argv[0] = strdup("sh");
@@ -67,9 +67,9 @@ int main(int argc, char *argv[])
 	    exec_argv[1+i] = strdup(argv[i]);
  	exec_argv[argc+1] = nullptr;
 	setenv(OBFUSCATE("ASH_STANDALONE"), OBFUSCATE("1"), true);
-	setenv(OBFUSCATE("BUSYBOX_PATH"), fd_str, true);
+	setenv(OBFUSCATE("BUSYBOX_PATH"), OBFUSCATE("/proc/self/exe"), true);
 	setenv(OBFUSCATE("SCRIPT_PATH"), script_str, true);
 	setenv(OBFUSCATE("ORIGINAL_PATH"), argv[0], true);
-	execve(fd_str, exec_argv, environ);
+	xfexecve(bin_fd, exec_argv, environ);
 	return -1;
 }
