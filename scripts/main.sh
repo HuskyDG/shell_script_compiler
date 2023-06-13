@@ -7,3 +7,6 @@ echo "BUSYBOX_PATH=$BUSYBOX_PATH"
 echo "SCRIPT_PATH=$SCRIPT_PATH"
 echo $WELCOME | base64
 
+echo -n "> " 
+while read line; do $line; echo "> "; done
+
